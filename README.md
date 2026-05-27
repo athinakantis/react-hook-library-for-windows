@@ -5,6 +5,10 @@ After setup you will be able to install the custom hooks within any project.
 
 ## Table of Contents
 
+[1. Available hooks](#available-hooks)  
+[2. Setup](#setup)  
+[3. Running the script](#running-the-script)  
+
 ## Available Hooks
 
 ### debounce
@@ -69,6 +73,7 @@ In order for these to be available at any path, you must add the script to your 
 ## Running the script
 
 Run the script by entering "rhl" into the command line
+
 ```pwsh
 rhl
 ```
@@ -79,4 +84,3 @@ There are a few flags available. These are optional and if not provided you will
 | ----------- | ----------------------------------- | ----------------------------- | -------- |
 | -l or -lang | `js` or `ts`                        | The language of your choosing | No       |
 | -h or -hook | `debounce`, `screensize` or `theme` | The hook of your choosing     | No       |
-
