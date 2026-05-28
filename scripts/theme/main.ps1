@@ -9,39 +9,11 @@ $projectRoot = Get-Location
 Write-Host "Language selected: $lang"
 
 $srcFolder = Get-ChildItem -Path $projectRoot -Recurse -Directory | Where-Object { $_.Name -eq "src" }
+$themeFolder = Get-ChildItem -Path $projectRoot -Recurse -Directory |
+Where-Object { $_.Name -eq "theme" } |
+Select-Object -First 1
 
-function CreateTheme([string]$path) {
-  $themeProvider = Join-Path $path "ThemeProvider.$($lang)x"
-  $themeContext = Join-Path $path "themeContext.$($lang)x"
-  $themeHook = Join-Path $path "useTheme.$($lang)"
-
-  $themeProviderPath = Join-Path $PSScriptRoot "templates\themeProvider.$($lang)x"
-  $themeContextPath = Join-Path $PSScriptRoot "templates\themeContext.$($lang)x"
-  $themeHookPath = Join-Path $PSScriptRoot "templates\useTheme.js"
-
-  $themeProviderContent = Get-Content -Path $themeProviderPath -Raw
-  $themeContextContent = Get-Content -Path $themeContextPath -Raw
-  $themeHookContent = Get-Content -Path $themeHookPath -Raw
-
-  Set-Content -Path $themeProvider -Value $themeProviderContent
-  Set-Content -Path $themeContext -Value $themeContextContent
-  Set-Content -Path $themeHook -Value $themeHookContent
-
-  Write-Host "Hook created at src/theme"
-  Write-Host "Theme hook created! Exiting"
-}
-
-if ($srcFolder -eq $false) {
-  Write-Host "No src folder found. Are you in the right directory?"
-  Exit
-}
-else {
-  $createdThemeFolder = New-Item -Path $srcFolder -ItemType Directory -Name "theme"
-  Write-Host "New Theme folder created"
-  CreateTheme $createdThemeFolder.FullName
-}
-
-function AddToMain() {
+function AddProviderToMain() {
   $mainFile = Get-ChildItem -Path . -Recurse -File |
   Where-Object {
     $_.FullName -match "src\\main\.(tsx|jsx)$"
@@ -83,3 +55,51 @@ function AddToMain() {
 
   Write-Host "ThemeProvider added to $($mainFile.FullName)"
 }
+
+function CreateTheme([string]$path) {
+  $themeProvider = Join-Path $path "ThemeProvider.$($lang)x"
+  $themeContext = Join-Path $path "themeContext.$($lang)x"
+  $themeHook = Join-Path $path "useTheme.$($lang)"
+
+  $themeProviderPath = Join-Path $PSScriptRoot "templates\themeProvider.$($lang)x"
+  $themeContextPath = Join-Path $PSScriptRoot "templates\themeContext.$($lang)x"
+  $themeHookPath = Join-Path $PSScriptRoot "templates\useTheme.js"
+
+  $themeProviderContent = Get-Content -Path $themeProviderPath -Raw
+  $themeContextContent = Get-Content -Path $themeContextPath -Raw
+  $themeHookContent = Get-Content -Path $themeHookPath -Raw
+
+  Set-Content -Path $themeProvider -Value $themeProviderContent
+  Set-Content -Path $themeContext -Value $themeContextContent
+  Set-Content -Path $themeHook -Value $themeHookContent
+
+  Write-Host "Hook created at src/theme"
+
+  AddProviderToMain
+
+  Write-Host "Theme hook created! Exiting" -ForegroundColor Green
+}
+
+if (-not $srcFolder) {
+  Write-Host "No src folder found. Are you in the right directory?"
+  Exit
+}
+
+if ($themeFolder) {
+
+  Write-Host "Existing theme folder found"
+
+  CreateTheme $themeFolder.FullName
+}
+else {
+
+  $createdThemeFolder = New-Item `
+    -Path $srcFolder.FullName `
+    -ItemType Directory `
+    -Name "theme"
+
+  Write-Host "New Theme folder created"
+
+  CreateTheme $createdThemeFolder.FullName
+}
+

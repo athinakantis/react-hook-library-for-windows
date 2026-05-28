@@ -24,7 +24,7 @@ function CreateDebouncer([string]$path) {
   Set-Content -Path $filePath -Value $content
 
   Write-Host "Hook created at $filePath"
-  Write-Host "Debouncer hook created! Exiting"
+  Write-Host "Debouncer hook created! Exiting" -ForegroundColor Green
 }
 
 if ($hooksFolder) {

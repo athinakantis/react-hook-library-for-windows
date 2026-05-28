@@ -22,7 +22,7 @@ function CreateScreenSizeHook([string]$path) {
   Set-Content -Path $filePath -Value $content
 
   Write-Host "Hook Created at $($filePath)"
-  Write-Host "ScreenSize hook created! Exiting"
+  Write-Host "ScreenSize hook created! Exiting" -ForegroundColor Green
 }
 
 if ($hooksFolder) {

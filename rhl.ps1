@@ -1,8 +1,8 @@
-$scriptsPath = "$PSScriptRoot\scripts"
+$scriptsPath = Join-Path $PSScriptRoot "scripts"
 $scripts = Get-ChildItem -Path $scriptsPath -Directory
 
 $validLangs = @("js", "ts")
-$validHooks = Get-ChildItem scripts -Directory
+$validHooks = $scripts.BaseName
 
 $lang = $null
 $hook = $null
@@ -29,7 +29,7 @@ function PromptForLang() {
   $value = Read-Host "Choose language [js/ts]"
 
   if ($validLangs -notcontains $value) {
-    Write-Host "Invalid language. Use js or ts."
+    Write-Host "Invalid language. Use js or ts. Exiting." -ForegroundColor Red
     exit
   }
 
@@ -37,7 +37,7 @@ function PromptForLang() {
 }
 
 function PromptForHook() {
-  Write-Host "React Hook Library"
+  Write-Host "React Hook Library" -ForegroundColor Cyan
   Write-Host "Select what you would like to install below"
   Write-Host "1: debounce"
   Write-Host "2: screensize"
@@ -50,29 +50,29 @@ function PromptForHook() {
     2 { return "screensize" }
     3 { return "theme" }
     default {
-      Write-Host "Invalid selection"
+      Write-Host "Invalid selection. Exiting." -ForegroundColor Red
       exit
     }
   }
-}
-
-if (-not $lang) {
-  $lang = PromptForLang
 }
 
 if (-not $hook) {
   $hook = PromptForHook
 }
 
-if ($validLangs -notcontains $lang) {
-  Write-Host "Invalid language: $lang"
-  Write-Host "Valid values: js, ts"
-  exit
+if (-not $lang) {
+  $lang = PromptForLang
 }
 
 if ($validHooks -notcontains $hook) {
-  Write-Host "Invalid hook: $hook"
+  Write-Host "Invalid hook: $hook. Exiting." -ForegroundColor Red
   Write-Host "Valid values: debounce, screensize, theme"
+  exit
+}
+
+if ($validLangs -notcontains $lang) {
+  Write-Host "Invalid language: $lang. Exiting." -ForegroundColor Red
+  Write-Host "Valid values: js, ts"
   exit
 }
 
